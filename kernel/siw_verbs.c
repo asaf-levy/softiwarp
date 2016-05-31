@@ -129,7 +129,7 @@ int siw_dealloc_ucontext(struct ib_ucontext *ofa_ctx)
 	return 0;
 }
 
-int siw_query_device(struct ib_device *ofa_dev, struct ib_device_attr *attr)
+int siw_query_device(struct ib_device *ofa_dev, struct ib_device_attr *attr, struct ib_udata *udata)
 {
 	struct siw_dev *sdev = siw_dev_ofa2siw(ofa_dev);
 	/*
@@ -192,6 +192,8 @@ int siw_query_device(struct ib_device *ofa_dev, struct ib_device_attr *attr)
 	 * attr->hw_ver;
 	 * attr->local_ca_ack_delay;
 	 */
+
+	udata->outlen = 0;
 	return 0;
 }
 
@@ -350,9 +352,19 @@ void siw_qp_put_ref(struct ib_qp *ofa_qp)
 	siw_qp_put(qp);
 }
 
-int siw_no_mad(struct ib_device *ofa_dev, int flags, u8 port,
-			    struct ib_wc *wc, struct ib_grh *grh,
-			    struct ib_mad *in_mad, struct ib_mad *out_mad)
+int siw_no_mad(struct ib_device *device,
+			   int process_mad_flags,
+			   u8 port_num,
+			   const struct ib_wc *in_wc,
+			   const struct ib_grh *in_grh,
+			   const struct ib_mad_hdr *in_mad,
+			   size_t in_mad_size,
+			   struct ib_mad_hdr *out_mad,
+			   size_t *out_mad_size,
+			   u16 *out_mad_pkey_index)
+//struct ib_device *ofa_dev, int flags, u8 port,
+//			    struct ib_wc *wc, struct ib_grh *grh,
+//			    struct ib_mad *in_mad, struct ib_mad *out_mad)
 {
 	return -ENOSYS;
 }
@@ -1120,8 +1132,10 @@ int siw_destroy_cq(struct ib_cq *ofa_cq)
  * @udata:	used to provide CQ ID back to user.
  */
 
-struct ib_cq *siw_create_cq(struct ib_device *ofa_dev, int size,
-			    int vec /* unused */,
+struct ib_cq *siw_create_cq(struct ib_device *ofa_dev,
+							const struct ib_cq_init_attr *attr,
+//							int size,
+//			    int vec /* unused */,
 			    struct ib_ucontext *ib_context,
 			    struct ib_udata *udata)
 {
@@ -1135,8 +1149,8 @@ struct ib_cq *siw_create_cq(struct ib_device *ofa_dev, int size,
 		rv = -ENOMEM;
 		goto err_out;
 	}
-	if (size < 1 || size > SIW_MAX_CQE) {
-		dprint(DBG_ON, ": CQE: %d\n", size);
+	if (attr->cqe < 1 || attr->cqe> SIW_MAX_CQE) {
+		dprint(DBG_ON, ": CQE: %d\n", attr->cqe);
 		rv = -EINVAL;
 		goto err_out;
 	}
@@ -1146,7 +1160,8 @@ struct ib_cq *siw_create_cq(struct ib_device *ofa_dev, int size,
 		rv = -ENOMEM;
 		goto err_out;
 	}
-	cq->ofa_cq.cqe = size - 1;
+//	cq->ofa_cq.cqe = size - 1;
+	cq->ofa_cq.cqe = attr->cqe - 1;
 
 	rv = siw_cq_add(sdev, cq);
 	if (rv)
@@ -1734,4 +1749,21 @@ int siw_post_srq_recv(struct ib_srq *ofa_srq, struct ib_recv_wr *wr,
 int siw_mmap(struct ib_ucontext *ctx, struct vm_area_struct *vma)
 {
 	return -ENOSYS;
+}
+
+int siw_get_port_immutable(struct ib_device *dev, u8 port_num, struct ib_port_immutable *immutable)
+{
+	struct ib_port_attr attr;
+	int err;
+	err = siw_query_port(dev, port_num, &attr);
+	if (err) {
+		dprint(DBG_WR|DBG_RX, "siw_query_port failed port_num=%d\n", port_num);
+		return err;
+	}
+
+	immutable->pkey_tbl_len = attr.pkey_tbl_len;
+	immutable->gid_tbl_len = attr.gid_tbl_len;
+	immutable->core_cap_flags = RDMA_CORE_PORT_IWARP;
+
+	return 0;
 }

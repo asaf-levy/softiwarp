@@ -49,7 +49,7 @@
 #include "siw.h"
 #include "siw_cm.h"
 
-extern int siw_query_device(struct ib_device *, struct ib_device_attr *);
+extern int siw_query_device(struct ib_device *, struct ib_device_attr *, struct ib_udata *);
 
 extern struct ib_ucontext *siw_alloc_ucontext(struct ib_device *,
 					      struct ib_udata *);
@@ -74,8 +74,10 @@ extern int siw_post_send(struct ib_qp *, struct ib_send_wr *,
 			 struct ib_send_wr **);
 extern int siw_post_receive(struct ib_qp *, struct ib_recv_wr *,
 			    struct ib_recv_wr **);
-extern struct ib_cq *siw_create_cq(struct ib_device *, int, int,
-				   struct ib_ucontext *, struct ib_udata *);
+//extern struct ib_cq *siw_create_cq(struct ib_device *, int, int,
+//								   struct ib_ucontext *, struct ib_udata *);
+extern struct ib_cq *siw_create_cq(struct ib_device *, const struct ib_cq_init_attr *,
+								   struct ib_ucontext *, struct ib_udata *);
 extern int siw_destroy_cq(struct ib_cq *);
 extern int siw_poll_cq(struct ib_cq *, int num_entries, struct ib_wc *);
 extern int siw_req_notify_cq(struct ib_cq *, enum ib_cq_notify_flags);

@@ -347,6 +347,7 @@ static struct siw_dev *siw_device_create(struct net_device *netdev)
 	ofa_dev->alloc_mw = NULL;
 	ofa_dev->bind_mw = NULL;
 	ofa_dev->dealloc_mw = NULL;
+	ofa_dev->get_port_immutable = siw_get_port_immutable;
 
 	ofa_dev->create_srq = siw_create_srq;
 	ofa_dev->modify_srq = siw_modify_srq;

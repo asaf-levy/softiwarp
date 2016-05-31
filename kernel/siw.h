@@ -760,8 +760,18 @@ struct ib_qp *siw_get_ofaqp(struct ib_device *, int);
 void siw_qp_get_ref(struct ib_qp *);
 void siw_qp_put_ref(struct ib_qp *);
 
-int siw_no_mad(struct ib_device *, int, u8, struct ib_wc *, struct ib_grh *,
-	       struct ib_mad *, struct ib_mad *);
+int siw_no_mad(struct ib_device *device,
+			   int process_mad_flags,
+			   u8 port_num,
+			   const struct ib_wc *in_wc,
+			   const struct ib_grh *in_grh,
+			   const struct ib_mad_hdr *in_mad,
+			   size_t in_mad_size,
+			   struct ib_mad_hdr *out_mad,
+			   size_t *out_mad_size,
+			   u16 *out_mad_pkey_index);
+//struct ib_device *, int, u8, struct ib_wc *, struct ib_grh *,
+//	       struct ib_mad *, struct ib_mad *);
 
 enum siw_qp_state siw_map_ibstate(enum ib_qp_state);
 
@@ -874,5 +884,7 @@ static inline struct siw_mr *siw_mem2mr(struct siw_mem *m)
 		return container_of(m, struct siw_mr, mem);
 	return m->mr;
 }
+
+int siw_get_port_immutable(struct ib_device *, u8, struct ib_port_immutable *);
 
 #endif

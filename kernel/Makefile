@@ -3,6 +3,7 @@ LINUX_SRC_PATH = /lib/modules/$(shell uname -r)/build
 #
 # If building against OFED, include the OFED headers first.
 #
+OFA_DIR = /usr/src/kernels/$(shell uname -r)
 ifneq ($(OFA_DIR),)
 EXTRA_CFLAGS += -DOFED_BUILD
 FOO := -I$(OFA_DIR)/include $(LINUXINCLUDE)

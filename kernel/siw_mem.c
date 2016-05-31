@@ -325,10 +325,10 @@ struct ib_dma_mapping_ops siw_dma_mapping_ops = {
 	.unmap_page		= siw_dma_unmap_page,
 	.map_sg			= siw_dma_map_sg,
 	.unmap_sg		= siw_dma_unmap_sg,
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 15, 0)
-	.dma_address		= siw_dma_address,
-	.dma_len		= siw_dma_len,
-#endif
+//#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 15, 0)
+//	.dma_address		= siw_dma_address,
+//	.dma_len		= siw_dma_len,
+//#endif
 	.sync_single_for_cpu	= siw_sync_single_for_cpu,
 	.sync_single_for_device	= siw_sync_single_for_device,
 	.alloc_coherent		= siw_dma_alloc_coherent,
