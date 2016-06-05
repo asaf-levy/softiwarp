@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo yum install -y kernel-devel libtool autoconf rdma libibverbs-utils libibcommon libibcm-devel libibverbs git wget yum-utils librdmacm-utils librdmacm-devel
+sudo yum install -y kernel-devel libtool autoconf rdma libibverbs-utils libibcommon libibcm-devel libibverbs yum-utils librdmacm-utils librdmacm-devel
 
 cd kernel
 make -j 4
@@ -21,7 +21,8 @@ sudo modprobe siw
 
 sudo ldconfig
 
-echo  "* soft memlock unlimited\n* hard memlock unlimited" | sudo tee /etc/security/limits.d/rdma.conf
+echo  "* soft memlock unlimited" | sudo tee /etc/security/limits.d/rdma.conf
+echo  "* hard memlock unlimited" | sudo tee --append /etc/security/limits.d/rdma.conf
 
 cd ..
 
