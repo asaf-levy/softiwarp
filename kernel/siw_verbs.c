@@ -366,7 +366,8 @@ int siw_no_mad(struct ib_device *device,
 //			    struct ib_wc *wc, struct ib_grh *grh,
 //			    struct ib_mad *in_mad, struct ib_mad *out_mad)
 {
-	return -ENOSYS;
+//	return -ENOSYS;
+	return IB_MAD_RESULT_SUCCESS;
 }
 
 
@@ -1764,6 +1765,7 @@ int siw_get_port_immutable(struct ib_device *dev, u8 port_num, struct ib_port_im
 	immutable->pkey_tbl_len = attr.pkey_tbl_len;
 	immutable->gid_tbl_len = attr.gid_tbl_len;
 	immutable->core_cap_flags = RDMA_CORE_PORT_IWARP;
+	immutable->max_mad_size = 0;
 
 	return 0;
 }
