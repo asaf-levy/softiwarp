@@ -1,6 +1,9 @@
 #!/bin/bash
+set -o errexit
+set -o nounset
+set -o xtrace
 
-sudo yum install -y kernel-devel libtool autoconf rdma libibverbs-utils libibcommon libibcm-devel libibverbs yum-utils librdmacm-utils librdmacm-devel
+sudo yum install -y kernel-devel-`uname -r` libtool autoconf rdma libibverbs-utils libibcommon libibcm-devel libibverbs yum-utils librdmacm-utils librdmacm-devel
 
 cd kernel
 make -j 4
